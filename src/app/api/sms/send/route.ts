@@ -14,7 +14,6 @@ export async function POST(req: Request) {
     const authCode = String(Math.floor(100000 + Math.random() * 900000));
     const expiresAt = new Date(Date.now() + 3 * 60 * 1000).toISOString();
 
-    // 노션 인증 DB에 저장
     await fetch("https://api.notion.com/v1/pages", {
       method: "POST",
       headers: {
@@ -25,17 +24,16 @@ export async function POST(req: Request) {
       body: JSON.stringify({
         parent: { database_id: VERIFY_DB_ID },
         properties: {
-          이름:       { title: [{ text: { content: id } }] },
-          전화번호:   { rich_text: [{ text: { content: phone } }] },
-          인증코드:   { rich_text: [{ text: { content: authCode } }] },
-          상태:       { rich_text: [{ text: { content: "sent" } }] },
-          만료시간:   { rich_text: [{ text: { content: expiresAt } }] },
-          생성일:     { rich_text: [{ text: { content: new Date().toISOString() } }] },
+          이름:     { title: [{ text: { content: id } }] },
+          전화번호: { rich_text: [{ text: { content: phone } }] },
+          인증코드: { rich_text: [{ text: { content: authCode } }] },
+          상태:     { rich_text: [{ text: { content: "sent" } }] },
+          만료시간: { rich_text: [{ text: { content: expiresAt } }] },
+          생성일:   { rich_text: [{ text: { content: new Date().toISOString() } }] },
         },
       }),
     });
 
-    // 알리고 SMS 발송
     if (process.env.ALIGO_API_KEY) {
       const formData = new FormData();
       formData.append("key", process.env.ALIGO_API_KEY);
@@ -49,11 +47,11 @@ export async function POST(req: Request) {
       });
       const aligoData = await aligoRes.json();
       console.log("[알리고 응답]", aligoData);
-    } else {
-      console.log(`[테스트 모드] ${phone} 인증코드: ${authCode}`);
     }
 
     return NextResponse.json({ ok: true, id });
   } catch (error) {
     console.error("[SMS 발송 오류]", error);
-    return NextRespons
+    return NextResponse.json({ ok: false, msg: "서버 오류" }, { status: 500 });
+  }
+}
