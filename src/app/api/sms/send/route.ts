@@ -1,10 +1,11 @@
 import { NextResponse } from "next/server";
-import { appendRow } from "@/lib/sheets";
+
+const NOTION_API_KEY = process.env.NOTION_API_KEY!;
+const VERIFY_DB_ID = process.env.NOTION_VERIFY_DB_ID!;
 
 export async function POST(req: Request) {
   try {
     const { phone } = await req.json();
-
     if (!phone) {
       return NextResponse.json({ ok: false, msg: "전화번호를 입력해주세요" }, { status: 400 });
     }
@@ -13,30 +14,35 @@ export async function POST(req: Request) {
     const authCode = String(Math.floor(100000 + Math.random() * 900000));
     const expiresAt = new Date(Date.now() + 3 * 60 * 1000).toISOString();
 
-    // Google Sheets '인증' 시트에 저장
-    // 헤더: ID | 전화번호 | 인증코드 | 상태 | 만료시간 | 인증시간 | IP | 생성일
-    await appendRow("인증", [
-      id,
-      phone,
-      authCode,
-      "sent",
-      expiresAt,
-      "",
-      req.headers.get("x-forwarded-for") || "",
-      new Date().toISOString(),
-    ]);
+    // 노션 인증 DB에 저장
+    await fetch("https://api.notion.com/v1/pages", {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${NOTION_API_KEY}`,
+        "Content-Type": "application/json",
+        "Notion-Version": "2022-06-28",
+      },
+      body: JSON.stringify({
+        parent: { database_id: VERIFY_DB_ID },
+        properties: {
+          이름:       { title: [{ text: { content: id } }] },
+          전화번호:   { rich_text: [{ text: { content: phone } }] },
+          인증코드:   { rich_text: [{ text: { content: authCode } }] },
+          상태:       { rich_text: [{ text: { content: "sent" } }] },
+          만료시간:   { rich_text: [{ text: { content: expiresAt } }] },
+          생성일:     { rich_text: [{ text: { content: new Date().toISOString() } }] },
+        },
+      }),
+    });
 
-    // ── 알리고 SMS 발송 ──
-    // .env.local에 ALIGO_API_KEY, ALIGO_USER_ID, ALIGO_SENDER가 있으면 실제 발송
-    // 없으면 테스트 모드 (콘솔에만 출력)
+    // 알리고 SMS 발송
     if (process.env.ALIGO_API_KEY) {
       const formData = new FormData();
       formData.append("key", process.env.ALIGO_API_KEY);
       formData.append("userid", process.env.ALIGO_USER_ID!);
       formData.append("sender", process.env.ALIGO_SENDER!);
       formData.append("receiver", phone.replace(/-/g, ""));
-      formData.append("msg", `[티킷제로] 인증번호: ${authCode}`);
-
+      formData.append("msg", `[더엘 법률사무소] 인증번호: ${authCode}`);
       const aligoRes = await fetch("https://apis.aligo.in/send/", {
         method: "POST",
         body: formData,
@@ -44,13 +50,10 @@ export async function POST(req: Request) {
       const aligoData = await aligoRes.json();
       console.log("[알리고 응답]", aligoData);
     } else {
-      // 테스트 모드: 콘솔에 인증코드 출력
       console.log(`[테스트 모드] ${phone} 인증코드: ${authCode}`);
     }
 
     return NextResponse.json({ ok: true, id });
   } catch (error) {
     console.error("[SMS 발송 오류]", error);
-    return NextResponse.json({ ok: false, msg: "서버 오류" }, { status: 500 });
-  }
-}
+    return NextRespons
