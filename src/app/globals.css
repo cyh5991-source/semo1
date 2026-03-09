@@ -1,9 +1,13 @@
-@import "tailwindcss";
-
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700;800;900&family=Outfit:wght@600;700;800;900&display=swap');
 
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
 body {
-  font-family: 'Noto Sans KR', 'Pretendard', sans-serif;
+  font-family: 'Noto Sans KR', sans-serif;
   background: #F6F7FB;
   color: #1B2559;
   -webkit-font-smoothing: antialiased;
@@ -26,6 +30,11 @@ body {
 
 @keyframes spin {
   to { transform: rotate(360deg); }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
 }
 
 .slide-up { animation: slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) both; }
