@@ -5,6 +5,7 @@ const VERIFY_DB_ID = process.env.NOTION_VERIFY_DB_ID!;
 
 export async function POST(req: Request) {
   try {
+    console.log("[서버 IP 확인]", req.headers.get("x-forwarded-for"));
     const { phone } = await req.json();
     if (!phone) {
       return NextResponse.json({ ok: false, msg: "전화번호를 입력해주세요" }, { status: 400 });
