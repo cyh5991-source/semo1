@@ -1,0 +1,925 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>메타 광고 이미지 - 개인회생 전문 변호사</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Noto Sans KR', sans-serif;
+    background: #1a1a2e;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 60px;
+    padding: 60px 20px;
+  }
+
+  h1.page-title {
+    color: #fff;
+    font-size: 28px;
+    margin-bottom: 20px;
+  }
+
+  .label {
+    color: #aaa;
+    font-size: 14px;
+    margin-bottom: 10px;
+    text-align: center;
+  }
+
+  /* 각 광고 카드 1080x1080 */
+  .ad-card {
+    width: 1080px;
+    height: 1080px;
+    position: relative;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+
+  .ad-card img.bg {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center top;
+    position: absolute;
+    top: 0; left: 0;
+  }
+
+  /* ===== 공통 오버레이 ===== */
+  .overlay {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 2;
+  }
+
+  /* ========================================
+     광고 1: 배우자 재산
+     ======================================== */
+  .ad1 .overlay {
+    background: linear-gradient(180deg, rgba(10,15,36,0.15) 0%, rgba(10,15,36,0.6) 45%, rgba(10,15,36,0.95) 70%);
+  }
+  .ad1 .badge {
+    position: absolute;
+    top: 48px; left: 48px;
+    background: #FF6B35;
+    color: #fff;
+    font-size: 22px;
+    font-weight: 700;
+    padding: 10px 24px;
+    border-radius: 30px;
+    letter-spacing: -0.5px;
+  }
+  .ad1 .main-text {
+    position: absolute;
+    bottom: 200px;
+    left: 48px;
+    right: 48px;
+    z-index: 3;
+  }
+  .ad1 .main-text .highlight {
+    color: #FFD93D;
+    font-size: 52px;
+    font-weight: 900;
+    line-height: 1.35;
+    letter-spacing: -1.5px;
+    text-shadow: 0 2px 20px rgba(0,0,0,0.5);
+  }
+  .ad1 .main-text .sub {
+    color: rgba(255,255,255,0.85);
+    font-size: 28px;
+    font-weight: 500;
+    margin-top: 16px;
+    line-height: 1.5;
+    text-shadow: 0 1px 10px rgba(0,0,0,0.4);
+  }
+  .ad1 .cta {
+    position: absolute;
+    bottom: 60px;
+    left: 48px;
+    right: 48px;
+    background: #FFD93D;
+    color: #0a0f24;
+    text-align: center;
+    font-size: 28px;
+    font-weight: 800;
+    padding: 24px;
+    border-radius: 16px;
+    letter-spacing: -0.5px;
+  }
+
+  /* ========================================
+     광고 2: 자동차
+     ======================================== */
+  .ad2 .overlay {
+    background: linear-gradient(135deg, rgba(0,32,63,0.92) 0%, rgba(0,32,63,0.5) 50%, rgba(0,32,63,0.3) 100%);
+  }
+  .ad2 .left-block {
+    position: absolute;
+    top: 0; left: 0;
+    width: 55%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 60px;
+    z-index: 3;
+  }
+  .ad2 .tag {
+    display: inline-block;
+    background: #00B4D8;
+    color: #fff;
+    font-size: 20px;
+    font-weight: 700;
+    padding: 8px 20px;
+    border-radius: 6px;
+    margin-bottom: 28px;
+    width: fit-content;
+  }
+  .ad2 .main-title {
+    color: #fff;
+    font-size: 50px;
+    font-weight: 900;
+    line-height: 1.3;
+    letter-spacing: -2px;
+  }
+  .ad2 .main-title em {
+    font-style: normal;
+    color: #90E0EF;
+    text-decoration: underline;
+    text-decoration-color: rgba(144,224,239,0.4);
+    text-underline-offset: 8px;
+  }
+  .ad2 .desc {
+    color: rgba(255,255,255,0.8);
+    font-size: 24px;
+    line-height: 1.6;
+    margin-top: 24px;
+    font-weight: 400;
+  }
+  .ad2 .bottom-bar {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    background: #00B4D8;
+    padding: 28px 60px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    z-index: 3;
+  }
+  .ad2 .bottom-bar span {
+    color: #fff;
+    font-size: 26px;
+    font-weight: 700;
+  }
+  .ad2 .bottom-bar .arrow {
+    font-size: 32px;
+    color: #fff;
+  }
+
+  /* ========================================
+     광고 3: 90일 연체 전 신용회복
+     ======================================== */
+  .ad3 .overlay {
+    background: linear-gradient(180deg, rgba(30,0,0,0.85) 0%, rgba(60,10,10,0.7) 40%, rgba(30,0,0,0.92) 100%);
+  }
+  .ad3 .content {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 60px;
+    z-index: 3;
+  }
+  .ad3 .warning-icon {
+    font-size: 72px;
+    margin-bottom: 20px;
+  }
+  .ad3 .top-label {
+    color: #FF6B6B;
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: 4px;
+    margin-bottom: 32px;
+  }
+  .ad3 .big-text {
+    color: #fff;
+    font-size: 54px;
+    font-weight: 900;
+    line-height: 1.35;
+    letter-spacing: -2px;
+  }
+  .ad3 .big-text .red {
+    color: #FF6B6B;
+  }
+  .ad3 .sub-text {
+    color: rgba(255,255,255,0.7);
+    font-size: 26px;
+    margin-top: 28px;
+    line-height: 1.6;
+  }
+  .ad3 .divider {
+    width: 80px;
+    height: 3px;
+    background: #FF6B6B;
+    margin: 36px auto;
+  }
+  .ad3 .cta-btn {
+    background: #FF6B6B;
+    color: #fff;
+    font-size: 26px;
+    font-weight: 700;
+    padding: 20px 48px;
+    border-radius: 50px;
+    margin-top: 16px;
+  }
+
+  /* ========================================
+     광고 4: 사업자도 가능
+     ======================================== */
+  .ad4 .overlay {
+    background: linear-gradient(160deg, rgba(15,23,42,0.95) 0%, rgba(15,23,42,0.6) 55%, rgba(15,23,42,0.3) 100%);
+  }
+  .ad4 .content {
+    position: absolute;
+    top: 60px; left: 60px; right: 60px; bottom: 60px;
+    z-index: 3;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  .ad4 .top-section .pill {
+    display: inline-block;
+    border: 2px solid #34D399;
+    color: #34D399;
+    font-size: 20px;
+    font-weight: 700;
+    padding: 8px 22px;
+    border-radius: 30px;
+    margin-bottom: 36px;
+  }
+  .ad4 .top-section h2 {
+    color: #fff;
+    font-size: 56px;
+    font-weight: 900;
+    line-height: 1.3;
+    letter-spacing: -2px;
+  }
+  .ad4 .top-section h2 .green {
+    color: #34D399;
+  }
+  .ad4 .checklist {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-top: 32px;
+  }
+  .ad4 .checklist .item {
+    color: rgba(255,255,255,0.85);
+    font-size: 24px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .ad4 .checklist .check {
+    color: #34D399;
+    font-size: 26px;
+    font-weight: 900;
+  }
+  .ad4 .bottom-cta {
+    background: linear-gradient(135deg, #34D399, #059669);
+    color: #fff;
+    text-align: center;
+    font-size: 28px;
+    font-weight: 800;
+    padding: 26px;
+    border-radius: 16px;
+  }
+
+  /* ========================================
+     광고 5: 새출발기금
+     ======================================== */
+  .ad5 .overlay {
+    background: linear-gradient(180deg, rgba(88,28,135,0.9) 0%, rgba(88,28,135,0.5) 50%, rgba(88,28,135,0.85) 100%);
+  }
+  .ad5 .content {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    z-index: 3;
+    display: flex;
+    flex-direction: column;
+    padding: 60px;
+  }
+  .ad5 .top-tag {
+    background: rgba(255,255,255,0.15);
+    color: #E9D5FF;
+    font-size: 20px;
+    font-weight: 600;
+    padding: 10px 24px;
+    border-radius: 8px;
+    width: fit-content;
+    margin-bottom: 40px;
+    backdrop-filter: blur(4px);
+  }
+  .ad5 .main-q {
+    color: #fff;
+    font-size: 52px;
+    font-weight: 900;
+    line-height: 1.35;
+    letter-spacing: -2px;
+    flex: 1;
+  }
+  .ad5 .main-q .purple {
+    color: #E9D5FF;
+    background: rgba(255,255,255,0.1);
+    padding: 4px 12px;
+    border-radius: 8px;
+  }
+  .ad5 .info-box {
+    background: rgba(255,255,255,0.12);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 20px;
+    padding: 32px;
+    margin-top: auto;
+  }
+  .ad5 .info-box p {
+    color: rgba(255,255,255,0.9);
+    font-size: 24px;
+    line-height: 1.6;
+    font-weight: 500;
+  }
+  .ad5 .info-box .cta-line {
+    color: #E9D5FF;
+    font-size: 26px;
+    font-weight: 700;
+    margin-top: 16px;
+  }
+
+  /* ========================================
+     광고 6: 안 되는 사람 기준
+     ======================================== */
+  .ad6 .overlay {
+    background: linear-gradient(180deg, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.85) 55%, rgba(0,0,0,0.97) 80%);
+  }
+  .ad6 .content {
+    position: absolute;
+    bottom: 60px;
+    left: 60px;
+    right: 60px;
+    z-index: 3;
+  }
+  .ad6 .label-tag {
+    display: inline-block;
+    background: #EF4444;
+    color: #fff;
+    font-size: 18px;
+    font-weight: 700;
+    padding: 8px 20px;
+    border-radius: 6px;
+    margin-bottom: 24px;
+    letter-spacing: 1px;
+  }
+  .ad6 .title {
+    color: #fff;
+    font-size: 52px;
+    font-weight: 900;
+    line-height: 1.3;
+    letter-spacing: -2px;
+    margin-bottom: 20px;
+  }
+  .ad6 .title .yellow {
+    color: #FBBF24;
+  }
+  .ad6 .list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 32px;
+  }
+  .ad6 .list .item {
+    color: rgba(255,255,255,0.8);
+    font-size: 23px;
+    font-weight: 500;
+    padding-left: 20px;
+    position: relative;
+  }
+  .ad6 .list .item::before {
+    content: '•';
+    position: absolute;
+    left: 0;
+    color: #FBBF24;
+  }
+  .ad6 .cta-bar {
+    background: #FBBF24;
+    color: #0f172a;
+    text-align: center;
+    font-size: 26px;
+    font-weight: 800;
+    padding: 22px;
+    border-radius: 14px;
+  }
+
+  /* ========================================
+     광고 7: 카드값 밀리기 시작
+     ======================================== */
+  .ad7 .overlay {
+    background: linear-gradient(180deg, rgba(15,23,42,0.3) 0%, rgba(15,23,42,0.95) 60%);
+  }
+  .ad7 .content {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    padding: 60px;
+    z-index: 3;
+  }
+  .ad7 .emoji-line {
+    font-size: 48px;
+    margin-bottom: 20px;
+  }
+  .ad7 .title {
+    color: #fff;
+    font-size: 48px;
+    font-weight: 900;
+    line-height: 1.35;
+    letter-spacing: -2px;
+  }
+  .ad7 .title .orange {
+    color: #FB923C;
+  }
+  .ad7 .desc {
+    color: rgba(255,255,255,0.75);
+    font-size: 24px;
+    line-height: 1.6;
+    margin-top: 20px;
+    font-weight: 400;
+  }
+  .ad7 .cta-row {
+    display: flex;
+    gap: 16px;
+    margin-top: 36px;
+  }
+  .ad7 .cta-row .btn {
+    flex: 1;
+    text-align: center;
+    padding: 22px;
+    border-radius: 14px;
+    font-size: 24px;
+    font-weight: 700;
+  }
+  .ad7 .btn-primary {
+    background: #FB923C;
+    color: #fff;
+  }
+  .ad7 .btn-secondary {
+    background: rgba(255,255,255,0.1);
+    color: #fff;
+    border: 2px solid rgba(255,255,255,0.3);
+  }
+
+  /* ========================================
+     광고 8: 회생/회복/새출발 차이
+     ======================================== */
+  .ad8 .overlay {
+    background: linear-gradient(180deg, rgba(3,7,30,0.95) 0%, rgba(3,7,30,0.7) 45%, rgba(3,7,30,0.92) 100%);
+  }
+  .ad8 .content {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    z-index: 3;
+    display: flex;
+    flex-direction: column;
+    padding: 56px;
+  }
+  .ad8 .header {
+    text-align: center;
+    margin-bottom: 36px;
+  }
+  .ad8 .header .small {
+    color: #60A5FA;
+    font-size: 20px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    margin-bottom: 12px;
+  }
+  .ad8 .header h2 {
+    color: #fff;
+    font-size: 46px;
+    font-weight: 900;
+    letter-spacing: -2px;
+  }
+  .ad8 .cards {
+    display: flex;
+    gap: 20px;
+    flex: 1;
+  }
+  .ad8 .card {
+    flex: 1;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 20px;
+    padding: 28px;
+    display: flex;
+    flex-direction: column;
+    backdrop-filter: blur(4px);
+  }
+  .ad8 .card .card-title {
+    font-size: 28px;
+    font-weight: 800;
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 2px solid;
+  }
+  .ad8 .card:nth-child(1) .card-title { color: #60A5FA; border-color: #60A5FA; }
+  .ad8 .card:nth-child(2) .card-title { color: #34D399; border-color: #34D399; }
+  .ad8 .card:nth-child(3) .card-title { color: #FBBF24; border-color: #FBBF24; }
+  .ad8 .card .card-desc {
+    color: rgba(255,255,255,0.75);
+    font-size: 20px;
+    line-height: 1.55;
+    font-weight: 400;
+    flex: 1;
+  }
+  .ad8 .card .card-who {
+    color: rgba(255,255,255,0.9);
+    font-size: 18px;
+    font-weight: 600;
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(255,255,255,0.1);
+  }
+  .ad8 .bottom-cta {
+    background: linear-gradient(135deg, #3B82F6, #2563EB);
+    color: #fff;
+    text-align: center;
+    font-size: 26px;
+    font-weight: 800;
+    padding: 24px;
+    border-radius: 16px;
+    margin-top: 28px;
+  }
+
+  /* ========================================
+     광고 9: 내 상황에 뭐가 맞는지
+     ======================================== */
+  .ad9 .overlay {
+    background: linear-gradient(135deg, rgba(6,78,59,0.92) 0%, rgba(6,78,59,0.4) 60%, rgba(6,78,59,0.2) 100%);
+  }
+  .ad9 .content {
+    position: absolute;
+    top: 0; left: 0;
+    width: 60%;
+    height: 100%;
+    z-index: 3;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 60px;
+  }
+  .ad9 .step-badge {
+    background: rgba(255,255,255,0.15);
+    color: #A7F3D0;
+    font-size: 18px;
+    font-weight: 600;
+    padding: 8px 20px;
+    border-radius: 20px;
+    width: fit-content;
+    margin-bottom: 32px;
+  }
+  .ad9 .title {
+    color: #fff;
+    font-size: 50px;
+    font-weight: 900;
+    line-height: 1.35;
+    letter-spacing: -2px;
+  }
+  .ad9 .title .mint {
+    color: #6EE7B7;
+  }
+  .ad9 .steps {
+    margin-top: 36px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .ad9 .step {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    color: rgba(255,255,255,0.85);
+    font-size: 22px;
+    font-weight: 500;
+  }
+  .ad9 .step .num {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: #34D399;
+    color: #064E3B;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    font-weight: 800;
+    flex-shrink: 0;
+  }
+  .ad9 .cta-btn {
+    background: #34D399;
+    color: #064E3B;
+    font-size: 26px;
+    font-weight: 800;
+    text-align: center;
+    padding: 22px;
+    border-radius: 14px;
+    margin-top: 40px;
+  }
+
+  /* ========================================
+     광고 10: 압류 전이라면
+     ======================================== */
+  .ad10 .overlay {
+    background: linear-gradient(180deg, rgba(127,29,29,0.88) 0%, rgba(127,29,29,0.5) 40%, rgba(15,23,42,0.95) 75%);
+  }
+  .ad10 .content {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    z-index: 3;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 60px;
+  }
+  .ad10 .urgent-tag {
+    background: #DC2626;
+    color: #fff;
+    font-size: 22px;
+    font-weight: 800;
+    padding: 10px 32px;
+    border-radius: 8px;
+    margin-bottom: 36px;
+    letter-spacing: 2px;
+  }
+  .ad10 .title {
+    color: #fff;
+    font-size: 56px;
+    font-weight: 900;
+    line-height: 1.3;
+    letter-spacing: -2px;
+  }
+  .ad10 .title .red {
+    color: #FCA5A5;
+  }
+  .ad10 .sub {
+    color: rgba(255,255,255,0.75);
+    font-size: 26px;
+    line-height: 1.6;
+    margin-top: 24px;
+    max-width: 700px;
+  }
+  .ad10 .timer-box {
+    display: flex;
+    gap: 24px;
+    margin-top: 40px;
+    margin-bottom: 40px;
+  }
+  .ad10 .timer-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+  .ad10 .timer-item .icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 16px;
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+  }
+  .ad10 .timer-item .text {
+    color: rgba(255,255,255,0.7);
+    font-size: 16px;
+    font-weight: 500;
+  }
+  .ad10 .cta-btn {
+    background: linear-gradient(135deg, #EF4444, #DC2626);
+    color: #fff;
+    font-size: 28px;
+    font-weight: 800;
+    padding: 24px 64px;
+    border-radius: 60px;
+    box-shadow: 0 8px 32px rgba(239,68,68,0.4);
+  }
+</style>
+</head>
+<body>
+
+<h1 class="page-title">메타 광고 이미지 템플릿 (1080x1080)</h1>
+<p style="color:#888; margin-bottom:20px;">각 이미지를 우클릭 → 스크린샷 또는 브라우저 개발자도구로 캡처하세요</p>
+
+<!-- ===== 광고 1: 배우자 재산 ===== -->
+<div class="label">광고 1: 배우자 재산 있어도 개인회생</div>
+<div class="ad-card ad1">
+  <img class="bg" src="d.jpg" alt="변호사">
+  <div class="overlay"></div>
+  <div class="badge">개인회생 전문 변호사</div>
+  <div class="main-text">
+    <div class="highlight">배우자 재산 있어도<br>개인회생 될 수 있습니다</div>
+    <div class="sub">"배우자 명의 재산 때문에 안 된다"는 건<br>잘못된 정보입니다. 정확한 기준을 알려드립니다.</div>
+  </div>
+  <div class="cta">1분 만에 내 상황 확인하기 →</div>
+</div>
+
+<!-- ===== 광고 2: 자동차 ===== -->
+<div class="label">광고 2: 자동차 있다고 무조건 안 되는 건 아닙니다</div>
+<div class="ad-card ad2">
+  <img class="bg" src="d.jpg" alt="변호사">
+  <div class="overlay"></div>
+  <div class="left-block">
+    <div class="tag">자동차 & 개인회생</div>
+    <div class="main-title">자동차 있다고<br><em>무조건 안 되는 건</em><br>아닙니다</div>
+    <div class="desc">차량 가액, 용도, 생계형 여부에 따라<br>유지하면서 회생 가능합니다.</div>
+  </div>
+  <div class="bottom-bar">
+    <span>내 차, 유지 가능한지 확인 →</span>
+    <span class="arrow">→</span>
+  </div>
+</div>
+
+<!-- ===== 광고 3: 90일 연체 전 신용회복 ===== -->
+<div class="label">광고 3: 90일 연체 전 신용회복의 함정</div>
+<div class="ad-card ad3">
+  <img class="bg" src="d.jpg" alt="변호사">
+  <div class="overlay"></div>
+  <div class="content">
+    <div class="warning-icon">⚠️</div>
+    <div class="top-label">꼭 알아야 할 사실</div>
+    <div class="big-text">90일 연체 전 신용회복,<br>왜 <span class="red">아쉬울 수</span><br><span class="red">있을까</span></div>
+    <div class="divider"></div>
+    <div class="sub-text">더 유리한 제도가 있을 수 있습니다.<br>선택 전에 비교해보세요.</div>
+    <div class="cta-btn">내 상황에 맞는 제도 확인 →</div>
+  </div>
+</div>
+
+<!-- ===== 광고 4: 사업자 ===== -->
+<div class="label">광고 4: 사업자도 개인회생 가능</div>
+<div class="ad-card ad4">
+  <img class="bg" src="d.jpg" alt="변호사">
+  <div class="overlay"></div>
+  <div class="content">
+    <div class="top-section">
+      <div class="pill">사업자 전용 안내</div>
+      <h2>사업자도<br><span class="green">개인회생</span><br>가능합니다</h2>
+      <div class="checklist">
+        <div class="item"><span class="check">✓</span> 자영업자·프리랜서 가능</div>
+        <div class="item"><span class="check">✓</span> 사업 유지하면서 진행 가능</div>
+        <div class="item"><span class="check">✓</span> 매출 있어도 신청 가능</div>
+        <div class="item"><span class="check">✓</span> 6,000건+ 실제 진행 경험</div>
+      </div>
+    </div>
+    <div class="bottom-cta">사업자 회생 가능 여부 확인 →</div>
+  </div>
+</div>
+
+<!-- ===== 광고 5: 새출발기금 ===== -->
+<div class="label">광고 5: 새출발기금이 맞는 사람</div>
+<div class="ad-card ad5">
+  <img class="bg" src="d.jpg" alt="변호사">
+  <div class="overlay"></div>
+  <div class="content">
+    <div class="top-tag">개인회생 vs 새출발기금</div>
+    <div class="main-q"><span class="purple">새출발기금</span>이<br>더 맞는 사람은<br>따로 있습니다</div>
+    <div class="info-box">
+      <p>모든 채무자에게 개인회생이 정답은 아닙니다.<br>소득·채무 유형·연체 기간에 따라<br>새출발기금이 더 유리할 수 있습니다.</p>
+      <div class="cta-line">→ 어떤 제도가 유리한지 1분 만에 확인</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 광고 6: 안 되는 사람 기준 ===== -->
+<div class="label">광고 6: 개인회생 안 되는 사람 기준</div>
+<div class="ad-card ad6">
+  <img class="bg" src="d.jpg" alt="변호사">
+  <div class="overlay"></div>
+  <div class="content">
+    <div class="label-tag">핵심 정리</div>
+    <div class="title">개인회생이<br><span class="yellow">안 되는 사람</span>,<br>진짜 기준은 이겁니다</div>
+    <div class="list">
+      <div class="item">단순 소득 부족? → 다른 방법 있습니다</div>
+      <div class="item">재산이 많다? → 기준이 다릅니다</div>
+      <div class="item">사업자? → 가능한 경우가 더 많습니다</div>
+    </div>
+    <div class="cta-bar">내가 해당되는지 바로 확인 →</div>
+  </div>
+</div>
+
+<!-- ===== 광고 7: 카드값 밀리기 시작 ===== -->
+<div class="label">광고 7: 카드값 밀리기 시작했다면</div>
+<div class="ad-card ad7">
+  <img class="bg" src="d.jpg" alt="변호사">
+  <div class="overlay"></div>
+  <div class="content">
+    <div class="emoji-line">💳</div>
+    <div class="title"><span class="orange">카드값</span> 밀리기<br>시작했다면<br>이건 먼저 보세요</div>
+    <div class="desc">연체가 길어지기 전에 선택할 수 있는 방법이<br>훨씬 많습니다. 지금이 가장 빠른 타이밍입니다.</div>
+    <div class="cta-row">
+      <div class="btn btn-primary">무료 상담 신청</div>
+      <div class="btn btn-secondary">1분 자가진단</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 광고 8: 회생/회복/새출발 차이 ===== -->
+<div class="label">광고 8: 회생, 회복, 새출발기금 차이</div>
+<div class="ad-card ad8">
+  <img class="bg" src="d.jpg" alt="변호사">
+  <div class="overlay"></div>
+  <div class="content">
+    <div class="header">
+      <div class="small">1분 정리</div>
+      <h2>회생 · 회복 · 새출발기금 차이</h2>
+    </div>
+    <div class="cards">
+      <div class="card">
+        <div class="card-title">개인회생</div>
+        <div class="card-desc">법원 인가 후<br>3년간 일정 금액 납부<br>→ 나머지 채무 탕감</div>
+        <div class="card-who">소득 있는 채무자</div>
+      </div>
+      <div class="card">
+        <div class="card-title">신용회복</div>
+        <div class="card-desc">채권자 협의로<br>이자 감면·분할 상환<br>→ 원금은 유지</div>
+        <div class="card-who">연체 90일 이내</div>
+      </div>
+      <div class="card">
+        <div class="card-title">새출발기금</div>
+        <div class="card-desc">장기 연체자 대상<br>원금 감면 + 분할상환<br>→ 최대 90% 감면</div>
+        <div class="card-who">장기 연체자</div>
+      </div>
+    </div>
+    <div class="bottom-cta">내 상황엔 어떤 제도? 바로 확인 →</div>
+  </div>
+</div>
+
+<!-- ===== 광고 9: 내 상황에 뭐가 맞는지 ===== -->
+<div class="label">광고 9: 내 상황에 뭐가 맞는지</div>
+<div class="ad-card ad9">
+  <img class="bg" src="d.jpg" alt="변호사">
+  <div class="overlay"></div>
+  <div class="content">
+    <div class="step-badge">⏱ 1분 자가진단</div>
+    <div class="title">내 상황엔<br><span class="mint">뭐가 맞는지</span><br>빠르게 알려드립니다</div>
+    <div class="steps">
+      <div class="step"><span class="num">1</span> 간단한 8가지 질문 응답</div>
+      <div class="step"><span class="num">2</span> 예상 월 납부금액 즉시 확인</div>
+      <div class="step"><span class="num">3</span> 최적 제도 자동 안내</div>
+    </div>
+    <div class="cta-btn">지금 바로 확인하기 →</div>
+  </div>
+</div>
+
+<!-- ===== 광고 10: 압류 전이라면 ===== -->
+<div class="label">광고 10: 압류 전이라면 이것부터</div>
+<div class="ad-card ad10">
+  <img class="bg" src="d.jpg" alt="변호사">
+  <div class="overlay"></div>
+  <div class="content">
+    <div class="urgent-tag">긴급 안내</div>
+    <div class="title"><span class="red">압류 전</span>이라면<br>이것부터 확인하세요</div>
+    <div class="sub">급여 압류, 재산 압류가 시작되면<br>선택지가 크게 줄어듭니다.</div>
+    <div class="timer-box">
+      <div class="timer-item">
+        <div class="icon">📋</div>
+        <div class="text">채무 현황 파악</div>
+      </div>
+      <div class="timer-item">
+        <div class="icon">⚖️</div>
+        <div class="text">제도 비교</div>
+      </div>
+      <div class="timer-item">
+        <div class="icon">🛡️</div>
+        <div class="text">압류 방지</div>
+      </div>
+      <div class="timer-item">
+        <div class="icon">✅</div>
+        <div class="text">전문가 상담</div>
+      </div>
+    </div>
+    <div class="cta-btn">압류 전 무료 상담 →</div>
+  </div>
+</div>
+
+</body>
+</html>
