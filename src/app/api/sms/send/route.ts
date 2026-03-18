@@ -8,10 +8,18 @@ const SECRET_KEY = process.env.NAVER_SECRET_KEY!;
 const SERVICE_ID = process.env.NAVER_SMS_SERVICE_ID!;
 const SENDER = process.env.NAVER_SMS_SENDER!;
 
-function makeSignature(timestamp: string) {
-  const url = `/sms/v2/services/${SERVICE_ID}/messages`;
-  const message = `POST \n${url}\n${timestamp}\n${ACCESS_KEY}`;
-  return crypto.createHmac("sha256", SECRET_KEY).update(message).digest("base64");
+function makeSignature(method: string, url: string, timestamp: string) {
+  const space = " ";
+  const newLine = "\n";
+  const hmac = crypto.createHmac("sha256", SECRET_KEY);
+  hmac.update(method);
+  hmac.update(space);
+  hmac.update(url);
+  hmac.update(newLine);
+  hmac.update(timestamp);
+  hmac.update(newLine);
+  hmac.update(ACCESS_KEY);
+  return hmac.digest("base64");
 }
 
 export async function POST(req: Request) {
@@ -25,6 +33,7 @@ export async function POST(req: Request) {
     const authCode = String(Math.floor(100000 + Math.random() * 900000));
     const expiresAt = new Date(Date.now() + 3 * 60 * 1000).toISOString();
     const timestamp = Date.now().toString();
+    const url = `/sms/v2/services/${SERVICE_ID}/messages`;
 
     // 노션 인증 DB 저장
     await fetch("https://api.notion.com/v1/pages", {
@@ -49,17 +58,19 @@ export async function POST(req: Request) {
 
     // 네이버 SENS SMS 발송
     const smsRes = await fetch(
-      `https://sens.apigw.ntruss.com/sms/v2/services/${SERVICE_ID}/messages`,
+      `https://sens.apigw.ntruss.com${url}`,
       {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
+          "Content-Type": "application/json; charset=utf-8",
           "x-ncp-apigw-timestamp": timestamp,
           "x-ncp-iam-access-key": ACCESS_KEY,
-          "x-ncp-apigw-signature-v2": makeSignature(timestamp),
+          "x-ncp-apigw-signature-v2": makeSignature("POST", url, timestamp),
         },
         body: JSON.stringify({
           type: "SMS",
+          contentType: "COMM",
+          countryCode: "82",
           from: SENDER,
           content: `[더엘 법률사무소] 인증번호: ${authCode}`,
           messages: [{ to: phone.replace(/-/g, "") }],
