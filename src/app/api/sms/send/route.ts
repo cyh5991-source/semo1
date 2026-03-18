@@ -1,11 +1,21 @@
 import { NextResponse } from "next/server";
+import crypto from "crypto";
 
 const NOTION_API_KEY = process.env.NOTION_API_KEY!;
 const VERIFY_DB_ID = process.env.NOTION_VERIFY_DB_ID!;
+const ACCESS_KEY = process.env.NAVER_ACCESS_KEY!;
+const SECRET_KEY = process.env.NAVER_SECRET_KEY!;
+const SERVICE_ID = process.env.NAVER_SMS_SERVICE_ID!;
+const SENDER = process.env.NAVER_SMS_SENDER!;
+
+function makeSignature(timestamp: string) {
+  const url = `/sms/v2/services/${SERVICE_ID}/messages`;
+  const message = `POST \n${url}\n${timestamp}\n${ACCESS_KEY}`;
+  return crypto.createHmac("sha256", SECRET_KEY).update(message).digest("base64");
+}
 
 export async function POST(req: Request) {
   try {
-    console.log("[서버 IP 확인]", req.headers.get("x-forwarded-for"));
     const { phone } = await req.json();
     if (!phone) {
       return NextResponse.json({ ok: false, msg: "전화번호를 입력해주세요" }, { status: 400 });
@@ -14,7 +24,9 @@ export async function POST(req: Request) {
     const id = crypto.randomUUID();
     const authCode = String(Math.floor(100000 + Math.random() * 900000));
     const expiresAt = new Date(Date.now() + 3 * 60 * 1000).toISOString();
+    const timestamp = Date.now().toString();
 
+    // 노션 인증 DB 저장
     await fetch("https://api.notion.com/v1/pages", {
       method: "POST",
       headers: {
@@ -35,20 +47,28 @@ export async function POST(req: Request) {
       }),
     });
 
-    if (process.env.ALIGO_API_KEY) {
-      const formData = new FormData();
-      formData.append("key", process.env.ALIGO_API_KEY);
-      formData.append("userid", process.env.ALIGO_USER_ID!);
-      formData.append("sender", process.env.ALIGO_SENDER!);
-      formData.append("receiver", phone.replace(/-/g, ""));
-      formData.append("msg", `[더엘 법률사무소] 인증번호: ${authCode}`);
-      const aligoRes = await fetch("https://apis.aligo.in/send/", {
+    // 네이버 SENS SMS 발송
+    const smsRes = await fetch(
+      `https://sens.apigw.ntruss.com/sms/v2/services/${SERVICE_ID}/messages`,
+      {
         method: "POST",
-        body: formData,
-      });
-      const aligoData = await aligoRes.json();
-      console.log("[알리고 응답]", aligoData);
-    }
+        headers: {
+          "Content-Type": "application/json",
+          "x-ncp-apigw-timestamp": timestamp,
+          "x-ncp-iam-access-key": ACCESS_KEY,
+          "x-ncp-apigw-signature-v2": makeSignature(timestamp),
+        },
+        body: JSON.stringify({
+          type: "SMS",
+          from: SENDER,
+          content: `[더엘 법률사무소] 인증번호: ${authCode}`,
+          messages: [{ to: phone.replace(/-/g, "") }],
+        }),
+      }
+    );
+
+    const smsData = await smsRes.json();
+    console.log("[SENS 응답]", JSON.stringify(smsData));
 
     return NextResponse.json({ ok: true, id });
   } catch (error) {
