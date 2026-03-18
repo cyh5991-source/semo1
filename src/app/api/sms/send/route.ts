@@ -9,15 +9,13 @@ const SERVICE_ID = process.env.NAVER_SMS_SERVICE_ID!;
 const SENDER = process.env.NAVER_SMS_SENDER!;
 
 function makeSignature(method: string, url: string, timestamp: string) {
-  const space = " ";
-  const newLine = "\n";
   const hmac = crypto.createHmac("sha256", SECRET_KEY);
   hmac.update(method);
-  hmac.update(space);
+  hmac.update(" ");
   hmac.update(url);
-  hmac.update(newLine);
+  hmac.update("\n");
   hmac.update(timestamp);
-  hmac.update(newLine);
+  hmac.update("\n");
   hmac.update(ACCESS_KEY);
   return hmac.digest("base64");
 }
@@ -36,7 +34,7 @@ export async function POST(req: Request) {
     const url = `/sms/v2/services/${SERVICE_ID}/messages`;
 
     // 노션 인증 DB 저장
-    await fetch("https://api.notion.com/v1/pages", {
+    const notionRes = await fetch("https://api.notion.com/v1/pages", {
       method: "POST",
       headers: {
         "Authorization": `Bearer ${NOTION_API_KEY}`,
@@ -55,6 +53,9 @@ export async function POST(req: Request) {
         },
       }),
     });
+
+    const notionData = await notionRes.json();
+    console.log("[노션 저장 결과]", JSON.stringify(notionData));
 
     // 네이버 SENS SMS 발송
     const smsRes = await fetch(
