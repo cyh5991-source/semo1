@@ -400,7 +400,13 @@ function VerifyStep({ onNext, onBack, answers }: any) {
       const data = await res.json();
       if (data.ok) {
         setVerified(true); clearInterval(intervalRef.current!);
-        await fetch("/api/submit", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ verificationId, phone, answers, result }) });
+        try {
+          const submitRes = await fetch("/api/submit", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ verificationId, phone, answers, result }) });
+          const submitData = await submitRes.json();
+          console.log("[submit 결과]", submitRes.status, submitData);
+        } catch (submitErr) {
+          console.error("[submit 오류]", submitErr);
+        }
         setTimeout(onNext, 800);
       } else { setError(data.msg || "인증 실패"); }
     } catch { setError("네트워크 오류"); }
