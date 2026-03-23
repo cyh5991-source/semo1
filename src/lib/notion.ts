@@ -1,6 +1,6 @@
-const NOTION_API_KEY = process.env.NOTION_API_KEY!;
-const SURVEY_DB_ID = process.env.NOTION_SURVEY_DB_ID!;
-const CONSULT_DB_ID = process.env.NOTION_CONSULT_DB_ID!;
+const NOTION_API_KEY = "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";
+const SURVEY_DB_ID = "c2c7d0f56f784e8094a381592bd67768";
+const CONSULT_DB_ID = "e5b50fd23b6a44549190fce8cae288ca";
 
 const headers = {
   "Authorization": `Bearer ${NOTION_API_KEY}`,
@@ -45,6 +45,7 @@ export async function saveSurvey(data: {
     const err = await res.json();
     throw new Error(`[노션 설문 저장 실패] ${JSON.stringify(err)}`);
   }
+  console.log("[설문 저장 완료]");
 }
 
 export async function saveConsult(data: {
@@ -72,4 +73,5 @@ export async function saveConsult(data: {
     const err = await res.json();
     throw new Error(`[노션 상담 저장 실패] ${JSON.stringify(err)}`);
   }
+  console.log("[상담 저장 완료]");
 }
