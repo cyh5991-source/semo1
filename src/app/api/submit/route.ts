@@ -1,4 +1,4 @@
-// v3-direct
+typescript// v3-direct
 import { NextResponse } from "next/server";
 
 const NOTION_API_KEY = "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";
