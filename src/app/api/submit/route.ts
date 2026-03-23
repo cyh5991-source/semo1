@@ -1,22 +1,34 @@
-// src/app/api/submit/route.ts  (v6-env)
+// src/app/api/submit/route.ts  (v7-runtime)
 import { NextResponse } from "next/server";
-
-const NOTION_API_KEY = process.env.NOTION_API_KEY!;
-const SURVEY_DB_ID = process.env.NOTION_SURVEY_DB_ID!;
-const CONSULT_DB_ID = process.env.NOTION_CONSULT_DB_ID!;
-
-const headers = {
-  "Authorization": `Bearer ${NOTION_API_KEY}`,
-  "Content-Type": "application/json",
-  "Notion-Version": "2022-06-28",
-};
 
 export async function POST(req: Request) {
   try {
+    const NOTION_API_KEY = process.env.NOTION_API_KEY;
+    const SURVEY_DB_ID = process.env.NOTION_SURVEY_DB_ID;
+    const CONSULT_DB_ID = process.env.NOTION_CONSULT_DB_ID;
+
+    console.log("[v7-submit] 환경변수 확인:", {
+      hasKey: !!NOTION_API_KEY,
+      keyPrefix: NOTION_API_KEY?.substring(0, 10),
+      surveyDb: SURVEY_DB_ID?.substring(0, 8),
+      consultDb: CONSULT_DB_ID?.substring(0, 8),
+    });
+
+    if (!NOTION_API_KEY || !SURVEY_DB_ID || !CONSULT_DB_ID) {
+      console.error("[v7-submit] 환경변수 누락!");
+      return NextResponse.json({ ok: false, msg: "환경변수 누락" }, { status: 500 });
+    }
+
+    const headers = {
+      "Authorization": `Bearer ${NOTION_API_KEY}`,
+      "Content-Type": "application/json",
+      "Notion-Version": "2022-06-28",
+    };
+
     const { verificationId, phone, answers, result } = await req.json();
     const surveyId = crypto.randomUUID();
 
-    console.log("[v6-submit 시작]", phone, surveyId);
+    console.log("[v7-submit 시작]", phone, surveyId);
 
     const surveyRes = await fetch("https://api.notion.com/v1/pages", {
       method: "POST",
@@ -41,7 +53,7 @@ export async function POST(req: Request) {
     });
 
     const surveyData = await surveyRes.json();
-    console.log("[설문 저장 결과]", JSON.stringify(surveyData));
+    console.log("[설문 저장 결과]", surveyRes.status, JSON.stringify(surveyData));
 
     const consultRes = await fetch("https://api.notion.com/v1/pages", {
       method: "POST",
@@ -61,7 +73,7 @@ export async function POST(req: Request) {
     });
 
     const consultData = await consultRes.json();
-    console.log("[상담 저장 결과]", JSON.stringify(consultData));
+    console.log("[상담 저장 결과]", consultRes.status, JSON.stringify(consultData));
 
     return NextResponse.json({ ok: true });
   } catch (error) {
