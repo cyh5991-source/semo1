@@ -1,10 +1,10 @@
-// v5-redis
+// v5-upstash
 import { NextResponse } from "next/server";
 
 const REDIS_URL = process.env.KV_REST_API_URL!;
 const REDIS_TOKEN = process.env.KV_REST_API_TOKEN!;
 
-async function redisGet(key: string): Promise<string | null> {
+async function redisGet(key: string) {
   const res = await fetch(`${REDIS_URL}/get/${key}`, {
     headers: { Authorization: `Bearer ${REDIS_TOKEN}` },
   });
