@@ -25,7 +25,7 @@ function toLabel(field: string, value: any): string {
 /* ── Google Sheets 헬퍼 ── */
 
 function base64url(buf: Buffer) {
-  return buf.toString("base64").replace(/=/g, "").replace(/\\+/g, "-").replace(/\\//g, "_");
+  return buf.toString("base64").replace(/=/g, "").replace(/\+/g, "-").replace(/\//g, "_");
 }
 
 async function getAccessToken(email: string, key: string) {
@@ -78,7 +78,7 @@ export async function POST(req: Request) {
     console.log("[v10-submit] === ROUTE HIT ===", new Date().toISOString());
 
     const GS_CLIENT_EMAIL = process.env.GS_CLIENT_EMAIL;
-    const GS_PRIVATE_KEY = process.env.GS_PRIVATE_KEY?.replace(/\\\\n/g, "\\n");
+    const GS_PRIVATE_KEY = process.env.GS_PRIVATE_KEY?.replace(/\\n/g, "\n");
     const GS_SPREADSHEET_ID = process.env.GS_SPREADSHEET_ID;
 
     console.log("[v10-submit] 환경변수 확인:", {
