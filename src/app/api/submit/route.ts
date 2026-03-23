@@ -103,7 +103,7 @@ export async function POST(req: Request) {
     console.log("[v10-submit 시작]", phone, surveyId);
 
     // 한 시트에 전체 데이터 행 추가 (옵션 텍스트로 변환)
-    const saveResult = await appendRow(token, GS_SPREADSHEET_ID, "시트1", [
+    const saveResult = await appendRow(token, GS_SPREADSHEET_ID, "시트3", [
       phone,
       toLabel("debt_range", answers.debt_range),
       toLabel("debt_type", answers.debt_type),
