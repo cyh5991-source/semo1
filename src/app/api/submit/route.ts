@@ -1,13 +1,18 @@
-// src/app/api/submit/route.ts  (v7-runtime)
+// src/app/api/submit/route.ts  (v8-force-rebuild)
 import { NextResponse } from "next/server";
+
+export const dynamic = "force-dynamic";
+export const runtime = "nodejs";
 
 export async function POST(req: Request) {
   try {
+    console.log("[v8-submit] === ROUTE HIT ===", new Date().toISOString());
+
     const NOTION_API_KEY = process.env.NOTION_API_KEY;
     const SURVEY_DB_ID = process.env.NOTION_SURVEY_DB_ID;
     const CONSULT_DB_ID = process.env.NOTION_CONSULT_DB_ID;
 
-    console.log("[v7-submit] 환경변수 확인:", {
+    console.log("[v8-submit] 환경변수 확인:", {
       hasKey: !!NOTION_API_KEY,
       keyPrefix: NOTION_API_KEY?.substring(0, 10),
       surveyDb: SURVEY_DB_ID?.substring(0, 8),
@@ -15,7 +20,7 @@ export async function POST(req: Request) {
     });
 
     if (!NOTION_API_KEY || !SURVEY_DB_ID || !CONSULT_DB_ID) {
-      console.error("[v7-submit] 환경변수 누락!");
+      console.error("[v8-submit] 환경변수 누락!");
       return NextResponse.json({ ok: false, msg: "환경변수 누락" }, { status: 500 });
     }
 
@@ -28,7 +33,7 @@ export async function POST(req: Request) {
     const { verificationId, phone, answers, result } = await req.json();
     const surveyId = crypto.randomUUID();
 
-    console.log("[v7-submit 시작]", phone, surveyId);
+    console.log("[v8-submit 시작]", phone, surveyId);
 
     const surveyRes = await fetch("https://api.notion.com/v1/pages", {
       method: "POST",
