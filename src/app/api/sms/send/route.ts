@@ -1,4 +1,4 @@
-// v5-redis
+// v5-upstash
 import { NextResponse } from "next/server";
 import crypto from "crypto";
 
@@ -21,10 +21,11 @@ function makeSignature(method: string, url: string, timestamp: string) {
   return hmac.digest("base64");
 }
 
-async function redisSet(key: string, value: string, exSeconds: number) {
-  await fetch(`${REDIS_URL}/set/${key}/${encodeURIComponent(value)}?EX=${exSeconds}`, {
+async function redisSet(key: string, value: string, ttl: number) {
+  const res = await fetch(`${REDIS_URL}/set/${key}/${encodeURIComponent(value)}?ex=${ttl}`, {
     headers: { Authorization: `Bearer ${REDIS_TOKEN}` },
   });
+  return res.json();
 }
 
 export async function POST(req: Request) {
@@ -36,12 +37,12 @@ export async function POST(req: Request) {
 
     const id = crypto.randomUUID();
     const authCode = String(Math.floor(100000 + Math.random() * 900000));
+
+    const redisResult = await redisSet(`auth:${id}`, authCode, 180);
+    console.log("[Redis 저장]", id, authCode, JSON.stringify(redisResult));
+
     const timestamp = Date.now().toString();
     const url = `/sms/v2/services/${SERVICE_ID}/messages`;
-
-    // Redis에 인증코드 저장 (3분)
-    await redisSet(`auth:${id}`, authCode, 180);
-    console.log("[Redis 저장]", id, authCode);
 
     const smsRes = await fetch(`https://sens.apigw.ntruss.com${url}`, {
       method: "POST",
