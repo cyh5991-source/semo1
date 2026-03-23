@@ -1,9 +1,9 @@
-typescript// v3-direct
+// src/app/api/submit/route.ts  (v4-env)
 import { NextResponse } from "next/server";
 
-const NOTION_API_KEY = "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";
-const SURVEY_DB_ID = "c2c7d0f56f784e8094a381592bd67768";
-const CONSULT_DB_ID = "e5b50fd23b6a44549190fce8cae288ca";
+const NOTION_API_KEY = process.env.NOTION_API_KEY!;
+const SURVEY_DB_ID = process.env.NOTION_SURVEY_DB_ID!;
+const CONSULT_DB_ID = process.env.NOTION_CONSULT_DB_ID!;
 
 const headers = {
   "Authorization": `Bearer ${NOTION_API_KEY}`,
