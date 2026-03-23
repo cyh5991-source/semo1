@@ -27,7 +27,7 @@ async function getAccessToken(email: string, key: string) {
   );
   const signature = crypto.sign("RSA-SHA256", Buffer.from(`${header}.${claim}`), {
     key,
-    padding: crypto.constants.RSA_PKCS1_v1_5,
+    padding: crypto.constants.RSA_PKCS1_PADDING,
   });
   const jwt = `${header}.${claim}.${base64url(signature)}`;
 
