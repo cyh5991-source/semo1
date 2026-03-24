@@ -682,7 +682,7 @@ export default function Home() {
       s = b.getElementsByTagName(e)[0];
       s.parentNode.insertBefore(t, s);
     })(window, document, "script", "https://connect.facebook.net/en_US/fbevents.js");
-    (window as any).fbq("init", "5086712508271352");
+    (window as any).fbq("init", "1613559826728767");
     (window as any).fbq("track", "PageView");
   }, []);
 
