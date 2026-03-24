@@ -685,7 +685,15 @@ export default function Home() {
     (window as any).fbq("init", "5086712508271352");
     (window as any).fbq("track", "PageView");
   }, []);
- 
+
+  useEffect(() => {
+    if (phase === "result") {
+      if (typeof (window as any).fbq !== "undefined") {
+        (window as any).fbq("track", "Lead");
+      }
+    }
+  }, [phase]);
+
   const goTo = (p: typeof phase) => { window.scrollTo({ top: 0, behavior: "smooth" }); setPhase(p); };
   const handleSelect = (value: any) => setAnswers(prev => ({ ...prev, [QUESTIONS[qIndex].id]: value }));
   const handleNext = () => { if (qIndex < QUESTIONS.length - 1) setQIndex(qIndex + 1); else goTo("verify"); };
