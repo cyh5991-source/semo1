@@ -10,6 +10,9 @@ export const metadata: Metadata = {
     description: "8개 질문에 답하면 끝. 2026년 기준 예상 월 변제금을 바로 알려드려요.",
     type: "website",
   },
+  other: {
+    "facebook-domain-verification": "eoyzltpu511xiu42sotuioawmy0jaa",
+  },
 };
 
 export default function RootLayout({
